@@ -1,0 +1,53 @@
+<project name="basedir-plugin"
+         xmlns="http://maven.apache.org/DECORATION/1.6.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+    <skin>
+        <groupId>lt.velykis.maven.skins</groupId>
+        <artifactId>reflow-maven-skin</artifactId>
+        <version>${tool.reflow-skin.version}</version>
+    </skin>
+    <publishDate format="yyyy-MM-dd" position="bottom"/>
+    <version position="bottom"/>
+    <googleAnalyticsAccountId>UA-39454217-4</googleAnalyticsAccountId>
+    <custom>
+        <reflowSkin>
+            <theme>bootswatch-spacelab</theme>
+            <navbarInverse>true</navbarInverse>
+            <highlightJs>true</highlightJs>
+            <highlightJsTheme>${tool.pegdown-doclet.style}</highlightJsTheme>
+            <skinAttribution>false</skinAttribution>
+            <brand>
+                <name>Basedir Maven Plugin</name>
+                <href></href>
+            </brand>
+            <titleTemplate>%2$s | %1$s</titleTemplate>
+            <toc>sidebar</toc>
+            <topNav>projects|related|reports</topNav>
+            <bottomNav>
+                <column>disabled</column>
+            </bottomNav>
+            <breadcrumbs>false</breadcrumbs>
+            <pages>
+                <about project="JavaRTMP-project">
+                    <titleTemplate>Basedir Maven Project</titleTemplate>
+                    <slogan>A Maven plugin to determine the basedir of the highest level project</slogan>
+                </about>
+            </pages>
+        </reflowSkin>
+    </custom>
+    <body>
+        <menu inherit="top" name="Modules" ref="projects">
+            <item
+                href="/index.html"
+                name="Basedir Maven Plugin - Parent"/>
+        </menu>
+        <menu inherit="top" name="Related Sites" ref="related">
+            <item href="https://github.com/emabrey/basedir-plugin/wiki" name="Wiki"/>
+            <item href="https://travis-ci.org/emabrey/basedir-plugin" name="Continuous Integration"/>
+            <item href="https://github.com/emabrey/basedir-plugin" name="Git Repository"/>
+            <item href="https://github.com/emabrey/basedir-plugin/issues" name="Issue Manager"/>
+        </menu>
+        <menu inherit="top" name="Generated Reports" ref="reports"/>
+        <footer></footer>
+    </body>
+</project>

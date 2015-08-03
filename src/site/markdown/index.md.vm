@@ -1,0 +1,33 @@
+#basedir-plugin
+
+The Basedir Maven Plugin is a Maven plugin to determine the basedir of the highest level project that is licensed via the [MIT License][project-license-link] and copyrighted by Emily Mabrey. For more details on the project, please [view the README][project-readme-file].
+
+---
+
+## Usage
+
+To use the basedir-plugin in your Maven project, add this plugin to the build plugins section of your `pom.xml`:
+
+```
+<plugin>
+  <groupId>com.github.emabrey</groupId>
+  <artifactId>basedir-plugin</artifactId>
+  <version>${exampleUsageDependencyVersion}</version>
+</plugin>
+```
+
+For other ways to use the Basedir Maven Plugin in your project, visit the [usage instructions wiki page][maven-usage].
+
+---
+
+##Build Status
+
+| Branch | Status |
+| ------ | ------ |
+| master | [![Build Status](https://travis-ci.org/emabrey/basedir-plugin.svg)](https://travis-ci.org/emabrey/basedir-plugin) |
+
+---
+
+[project-license-link]: https://github.com/emabrey/basedir-plugin/LICENSE.md
+[project-readme-file]: /readme.html
+[maven-usage]: https://github.com/emabrey/basedir-plugin/wiki/Usage-Instructions
