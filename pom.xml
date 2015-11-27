@@ -285,7 +285,6 @@
                 </executions>
                 <configuration>
                     <effort>Max</effort>
-                    <threshold>Low</threshold>
                 </configuration>
             </plugin>
 

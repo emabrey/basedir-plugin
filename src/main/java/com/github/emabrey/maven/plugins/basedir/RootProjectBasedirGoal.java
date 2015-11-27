@@ -106,7 +106,7 @@ public class RootProjectBasedirGoal extends AbstractOutputPropertyMojo {
    */
   private void generatePluginOutput() throws MojoFailureException {
   
-    setOutputValue(generateRootDirectoryStringOutput());
+    createOutputPropertiesWithoutAllowingOverwrites(generateRootDirectoryStringOutput());
   }
   
   /**

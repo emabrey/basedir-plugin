@@ -23,7 +23,7 @@ You can view a list of those recognized for their assistance with the project [h
 
 ##Project Information
 
-Current information on the project is available at [the basedir-plugin project site][project-site-link]. As the project is currently working towards an initial release, the information on the site is volatile and subject to change without warning. The travis-ci service verifies the build status of the project whenever the project's GitHub repository is modified; you can view the status of each branch [here][project-ci-link].
+Current information on the project is available at [the basedir-plugin project site][directory-maven-plugin-project-link]. As the project is currently working towards an initial release, the information on the site is volatile and subject to change without warning. The travis-ci service verifies the build status of the project whenever the project's GitHub repository is modified; you can view the status of each branch [here][project-ci-link].
 
 [directory-maven-plugin-project-link]: https://github.com/jdcasey/directory-maven-plugin/
 [project-license-file]: LICENSE.md
