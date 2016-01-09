@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+        <groupId>com.github.emabrey</groupId>
+        <artifactId>basedir-plugin-testing-project</artifactId>
+        <version>@project.version@</version>
+        <packaging>jar</packaging>
+        
+        <licenses>
+            <license>
+                <name>MIT Expat License</name>
+                <url>http://www.opensource.org/licenses/mit-license.php</url>
+                <comments>Copyright 2016 Emily Mabrey</comments>
+            </license>
+        </licenses>
+
+        <properties>
+            <lineLength>120</lineLength>
+            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        </properties>
+        
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.emabrey</groupId>
+                    <artifactId>basedir-plugin</artifactId>
+                    <version>@project.version@</version>
+                    <executions>
+                        <execution>
+                            <id>basic-maven-property-output</id>
+                            <goals>
+                                <goal>root-directory</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>basic-system-property-output</id>
+                            <goals>
+                                <goal>root-directory</goal>
+                            </goals>
+                            <configuration>
+								<outputProperty>system.root.directory</outputProperty>
+                                <generateSystemProperty>true</generateSystemProperty>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+</project>

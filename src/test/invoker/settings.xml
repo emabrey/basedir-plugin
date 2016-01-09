@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- Integration test specific changes for settings.xml; 
+	 "@@ properties" are autoreplaced by invoker plugin.
+-->
+<settings>
+  <profiles>
+	<!-- We impersonate Maven central for reproducability
+             and so the integration tests are deterministic.
+	-->
+	<profile>
+	  <id>integration-testing-repo</id>
+	  <activation>
+		<activeByDefault>true</activeByDefault>
+	  </activation>
+	  <repositories>
+		<repository>
+		  <id>impersonate-central-repository</id>
+		  <url>@localRepositoryUrl@</url>
+		  <releases>
+			<enabled>true</enabled>
+		  </releases>
+		  <snapshots>
+			<enabled>true</enabled>
+		  </snapshots>
+		</repository>
+	  </repositories>
+	  <pluginRepositories>
+		<pluginRepository>
+		  <id>impersonate-central-plugin-repository</id>
+		  <url>@localRepositoryUrl@</url>
+		  <releases>
+			<enabled>true</enabled>
+		  </releases>
+		  <snapshots>
+			<enabled>true</enabled>
+		  </snapshots>
+		</pluginRepository>
+	  </pluginRepositories>
+	</profile>
+  </profiles>
+</settings>

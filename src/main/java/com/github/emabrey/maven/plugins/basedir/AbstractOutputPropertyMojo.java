@@ -32,6 +32,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
@@ -93,7 +94,7 @@ public abstract class AbstractOutputPropertyMojo extends AbstractMojo {
    * instead of overwriting a property value silently.
    */
   @Getter(AccessLevel.PROTECTED)
-  @Parameter(required = true)
+  @Parameter(defaultValue = "root.directory", required = true)
   private String outputProperty;
   
   /**

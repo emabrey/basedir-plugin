@@ -34,19 +34,23 @@ import java.util.Comparator;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 
 /**
  * Determines the directory closest to the filesystem root from all available project directories within the current
- * reactor and outputs that directory according to the user configurable parameters.
+ * reactor and outputs that directory to either a Maven or a system property via the user configurable parameters.
  * 
  * @author Emily Mabrey (emabrey@users.noreply.github.com)
  */
-public class RootProjectBasedirGoal extends AbstractOutputPropertyMojo {
+@Mojo(name = "root-directory", defaultPhase = LifecyclePhase.INITIALIZE)
+public class RootDirectoryGoal extends AbstractOutputPropertyMojo {
   
   /**
    * A {@link Path} {@link Comparator} which returns the directory with the "highest level" (higher level directories
@@ -71,7 +75,9 @@ public class RootProjectBasedirGoal extends AbstractOutputPropertyMojo {
   private boolean followingSymbolicLinks;
   
   /**
-   * Entry point for Maven plugin execution.
+   * Entry point for Maven plugin execution. This method implements a top-level handler for uncaught {@link Throwable}
+   * instances which are not implementations of the {@link MojoExecutionException} or {@link MojoFailureException}
+   * exceptions.
    * 
    * @throws MojoExecutionException
    *         Standard Maven exception indicating a seemingly non-fatal error has occurred.
@@ -81,13 +87,17 @@ public class RootProjectBasedirGoal extends AbstractOutputPropertyMojo {
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
   
-    if (isExecutionSkipped()) {
-      skipPluginExecution();
+    try {
+      if (isExecutionSkipped()) {
+        skipPluginExecution();
+      }
+      else {
+        generatePluginOutput();
+      }
     }
-    else {
-      generatePluginOutput();
+    catch (Throwable unexpectedThrowable) {
+      handleUnexpectedThrowableDuringExecute(unexpectedThrowable);
     }
-    
   }
   
   /**
@@ -107,6 +117,35 @@ public class RootProjectBasedirGoal extends AbstractOutputPropertyMojo {
   private void generatePluginOutput() throws MojoFailureException {
   
     createOutputPropertiesWithoutAllowingOverwrites(generateRootDirectoryStringOutput());
+  }
+  
+  /**
+   * Properly handles an unexpected {@link Throwable} instance by wrapping it using the Maven specific
+   * {@link MojoFailureException}; if the given {@link Throwable} is already a Maven {@link Exception} it is simply
+   * passed along unchanged.
+   * 
+   * @param unexpectedThrowable
+   *        Any {@link Throwable} which reaches the top-level of the execute method
+   * @throws MojoExecutionException
+   *         If the given {@link Throwable} is an instance of {@link MojoExecutionException} is is simply re-thrown
+   *         unchanged.
+   * @throws MojoFailureException
+   *         If the given {@link Throwable} is an instance of {@link MojoFailureException} is is simply re-thrown
+   *         unchanged; this {@link Exception} is also used as a wrapper.
+   */
+  private void handleUnexpectedThrowableDuringExecute(final Throwable unexpectedThrowable)
+    throws MojoExecutionException, MojoFailureException {
+  
+    if (unexpectedThrowable instanceof MojoExecutionException) {
+      throw (MojoExecutionException) unexpectedThrowable;
+    }
+    else if (unexpectedThrowable instanceof MojoFailureException) {
+      throw (MojoFailureException) unexpectedThrowable;
+    }
+    else {
+      writeDebugLogMessage(() -> "Handling unexpected Throwable using a MojoFailureException wrapper");
+      throw new MojoFailureException("Unexpected Throwable wrapped using Maven exception", unexpectedThrowable);
+    }
   }
   
   /**
