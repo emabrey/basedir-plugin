@@ -30,8 +30,8 @@
 
     <scm>
         <url>https://github.com/emabrey/basedir-plugin</url>
-        <connection>scm:git:git://github.com/emabrey/basedir-plugin.git</connection>
-        <developerConnection>scm:git:https://emabrey@github.com/emabrey/basedir-plugin.git</developerConnection>
+        <connection>scm:git:https://github.com/emabrey/basedir-plugin.git</connection>
+        <developerConnection>scm:git:git://github.com/emabrey/basedir-plugin.git</developerConnection>
     </scm>
 
     <distributionManagement>
