@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.emabrey</groupId>
     <artifactId>basedir-plugin</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Basedir Maven Plugin</name>
@@ -32,8 +32,7 @@
         <url>https://github.com/emabrey/basedir-plugin</url>
         <connection>scm:git:git://github.com/emabrey/basedir-plugin.git</connection>
         <developerConnection>scm:git:https://emabrey@github.com/emabrey/basedir-plugin.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+    </scm>
 
     <distributionManagement>
         <site>
@@ -732,6 +731,8 @@
             </plugin>
 
             <!-- Configure error message generated during SCM dirty check.
+                 The check must be manually triggered during a release by
+                 calling scm:check-local-modification goal.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -755,14 +756,13 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.2</version>
                 <configuration>
-                    <preparationGoals>clean verify</preparationGoals>
+                    <preparationGoals>clean verify scm:check-local-modification</preparationGoals>
                     <goals>deploy site-deploy</goals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <branchName>release-@{project.version}</branchName>
                     <tagNameFormat>v.@{project.version}</tagNameFormat>
-                    <password>${github.password}</password>
                 </configuration>
             </plugin>
 
