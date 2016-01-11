@@ -756,7 +756,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.2</version>
                 <configuration>
-                    <preparationGoals>clean verify scm:check-local-modification</preparationGoals>
+                    <preparationGoals>clean verify</preparationGoals>
                     <goals>deploy site-deploy</goals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
