@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.emabrey</groupId>
     <artifactId>basedir-plugin</artifactId>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Basedir Maven Plugin</name>
@@ -32,8 +32,7 @@
         <url>https://github.com/emabrey/basedir-plugin</url>
         <connection>scm:git:git://github.com/emabrey/basedir-plugin.git</connection>
         <developerConnection>scm:git:https://emabrey@github.com/emabrey/basedir-plugin.git</developerConnection>
-      <tag>v.0.1</tag>
-  </scm>
+    </scm>
 
     <distributionManagement>
         <site>
