@@ -559,24 +559,10 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>unit-tests-coverage-report-generation</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>integration-tests-jvm-agent-initialize</id>
                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>prepare-agent-integration</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>integration-tests-coverage-report-generation</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>report-integration</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -955,9 +941,15 @@
                 <version>${plugin.jacoco-maven.version}</version>
                 <reportSets>
                     <reportSet>
-                        <id>generate-coverage-report</id>
+                        <id>unit-tests-coverage-report-generation</id>
                         <reports>
                             <report>report</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>integration-tests-coverage-report-generation</id>
+                        <reports>
+                            <report>report-integration</report>
                         </reports>
                     </reportSet>
                 </reportSets>
