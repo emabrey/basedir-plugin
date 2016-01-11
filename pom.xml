@@ -731,8 +731,6 @@
             </plugin>
 
             <!-- Configure error message generated during SCM dirty check.
-                 The check must be manually triggered during a release by
-                 calling scm:check-local-modification goal.
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -756,13 +754,14 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.2</version>
                 <configuration>
-                    <preparationGoals>clean verify scm:check-local-modification</preparationGoals>
+                    <preparationGoals>clean verify</preparationGoals>
                     <goals>deploy site-deploy</goals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <branchName>release-@{project.version}</branchName>
                     <tagNameFormat>v.@{project.version}</tagNameFormat>
+                    <password>${github.password}</password>
                 </configuration>
             </plugin>
 
