@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.emabrey</groupId>
     <artifactId>basedir-plugin</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Basedir Maven Plugin</name>
@@ -32,8 +32,8 @@
         <url>https://github.com/emabrey/basedir-plugin</url>
         <connection>scm:git:git://github.com/emabrey/basedir-plugin.git</connection>
         <developerConnection>scm:git:https://emabrey@github.com/emabrey/basedir-plugin.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <site>
@@ -63,7 +63,10 @@
 
     <properties>
         <lineLength>120</lineLength>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss.SSS, z</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss.SSS, z</maven.build.timestamp.format>        
+        <jvm.normal.options>-server -ea -Xss8m -Xms512m -Xmx1024m </jvm.normal.options>
+        <jvm.experimental.options>-XX:+UnlockExperimentalVMOptions -XX:+AggressiveOpts -XX:+OptimizeStringConcat -XX:+UseSplitVerifier</jvm.experimental.options>
+        <argLine>${jvm.normal.options} ${jvm.experimental.options}</argLine>
 
         <project.maven.version>3.2.5</project.maven.version>
         <project.java.version>1.8</project.java.version>
@@ -367,13 +370,6 @@
                 <version>${plugin.maven-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>default-descriptor</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>descriptor</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>autogenerate-help-mojo</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -382,12 +378,19 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-sources/maven-plugin-plugin/</outputDirectory>
                         </configuration>
+                    </execution>                    
+                    <execution>
+                        <id>default-descriptor</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
                     </execution>
                 </executions>
                 <configuration>         
                     <requirements>
                         <maven>${project.maven.version}</maven>
-                        <jdk>${plugin.retrolambda-maven.targetVersion}</jdk>
+                        <jdk>${project.java.version}</jdk>
                     </requirements>
                 </configuration>
             </plugin>
@@ -432,7 +435,6 @@
                             <libs>
                                 <lib>${java.home}/lib/rt.jar</lib>
                             </libs>
-
                             <options>
                                 <option>-keepdirectories</option>
                                 <option>-keeppackagenames com.github.emabrey.maven.plugins.basedir</option>
@@ -503,8 +505,8 @@
                         <configuration>
                             <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
                             <runOrder>failedfirst</runOrder>
-                            <forkCount>0.5C</forkCount>
-                            <threadCount>2</threadCount>
+                            <forkCount>1</forkCount>
+                            <threadCount>3</threadCount>
                             <parallel>true</parallel>
                         </configuration>
                     </execution>
@@ -522,10 +524,16 @@
                 <version>2.0.0</version>
                 <executions>
                     <execution>
-                        <id>integration-testing</id>
-                        <phase>integration-test</phase>
+                        <id>prepare-integration-testing</id>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>install</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>execute-integration-tests</id>
+                        <phase>integration-test</phase>
+                        <goals>
                             <goal>run</goal>
                         </goals>
                     </execution>
@@ -533,9 +541,13 @@
                 <configuration>
                     <showErrors>true</showErrors>
                     <streamLogs>true</streamLogs>
+                    <profiles>
+                        <profile>default-integration-test</profile>
+                    </profiles>
                     <failIfNoProjects>true</failIfNoProjects>
                     <projectsDirectory>src/test/invoker/</projectsDirectory>
                     <settingsFile>src/test/invoker/settings.xml</settingsFile>
+                    <mergeUserSettings>true</mergeUserSettings>
                     <cloneProjectsTo>${project.build.directory}/invoker/</cloneProjectsTo>
                     <localRepositoryPath>${project.build.directory}/invoker/local-repo</localRepositoryPath>
                     <parallelThreads>2</parallelThreads>
@@ -557,16 +569,14 @@
                         <phase>initialize</phase>
                         <goals>
                             <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>integration-tests-jvm-agent-initialize</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
                             <goal>prepare-agent-integration</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <append>true</append>
+                    <propertyName>argLine</propertyName>
+                </configuration>
             </plugin>
 
             <!-- Attach project code sources to the project as a
@@ -660,20 +670,19 @@
             <!-- Attach armored GPG signatures to the project as a
                  secondary artifact. This is required by the Sonatype
                  nexus requirements for OSSRH. To successfully execute this
-                 plugin you may need to specify the following profile within
-                 your settings.xml file (replace the placeholder tokens with
-                 the appropriate specifics for your GPG setup):
+                 plugin you may need to specify the following property values 
+                 within your settings.xml file: "gpg.executable",
+                 "gpg.keyname", "gpg.argList" and "gpg.passphrase". In order to 
+                 prevent storing a plaintext passphrase it is recommended that
+                 the Maven master password encryption feature be used. If you
+                 do not provide the needed settings it will not be possible to
+                 make a project release to Maven central.
 
-                <profile>
-                    <id>gpg2-configuration</id>
-                    <activation>
-                            <activeByDefault>true</activeByDefault>
-                    </activation>
-                    <properties>
-                            <gpg.executable>PATH_TO_GPG2_EXECUTABLE</gpg.executable>
-                            <gpg.keyname>GPG_KEY_NAME</gpg.keyname>
-                    </properties>
-                </profile>
+                 Information regarding the Maven master password feature: 
+                 https://maven.apache.org/guides/mini/guide-encryption.html
+                 
+                 Information regarding the options for the GPG argument list:
+                 https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -688,11 +697,16 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>@{gpg.argList}</arg>
+                    </gpgArguments>
+                </configuration>
             </plugin>
 
             <!-- Generates a GitHub tagged release during a project deployment.
                  This release upload uses the configured authentication data
-                 from within settings.xml for the github server id.
+                 from within settings.xml.
             -->
             <plugin>
                 <groupId>de.jutzig</groupId>
@@ -708,9 +722,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <releaseName>Basedir Maven Plugin - v.${project.version}</releaseName>
-                    <tag>v.${project.version}</tag>
-                    <artifact>${project.root.basedir}/target/${project.build.finalName}.jar</artifact>
+                    <releaseName>Basedir Maven Plugin - ${project.version}</releaseName>
+                    <tag>version-${project.version}</tag>
+                    <artifact>@{project.root.basedir}/target/${project.build.finalName}.jar</artifact>
                     <description>Basedir Maven Plugin project repository as of ${maven.build.timestamp}</description>
                 </configuration>
             </plugin>
@@ -731,21 +745,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Configure error message generated during SCM dirty check.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-scm-plugin</artifactId>
-                <version>1.9.4</version>
-                <configuration>
-                    <timestampFormat>${timestamp.format.time}</timestampFormat>
-                    <dateFormat>${timestamp.format.date}</dateFormat>
-                    <userDateFormat>${timestamp.format.date}</userDateFormat>
-                    <errorMessage>Cannot release while local repository has uncommitted changes.</errorMessage>
-                    <pushChanges>false</pushChanges>
-                </configuration>
-            </plugin>
-
             <!-- Trigger the deployment of the project artifacts and site
                  documentation while automatically managing version modification
                  and project verification.
@@ -755,14 +754,14 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.2</version>
                 <configuration>
-                    <preparationGoals>clean verify</preparationGoals>
+                    <preparationGoals>verify test integration-test</preparationGoals>
                     <goals>deploy site-deploy</goals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <branchName>release-@{project.version}</branchName>
-                    <tagNameFormat>v.@{project.version}</tagNameFormat>
-                    <password>${github.password}</password>
+                    <tagNameFormat>version-@{project.version}</tagNameFormat>
+                    <password>${github.server.password}</password>
                 </configuration>
             </plugin>
 
@@ -777,26 +776,23 @@
                 <version>0.12</version>
                 <executions>
                     <execution>
-                        <id>publish-site-to-github</id>
-                        <phase>site-deploy</phase>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
+                        <configuration>
+                            <project>
+                                <groupId>com.github.emabrey</groupId>
+                                <artifactId>basedir-plugin</artifactId>
+                            </project>
+                            <outputDirectory>${project.reporting.stagingDirectory}</outputDirectory>
+                            <message>Deploy site documentation for the Basedir Maven Plugin</message>
+                            <merge>true</merge>
+                            <repositoryOwner>emabrey</repositoryOwner>
+                            <repositoryName>basedir-plugin</repositoryName>
+                            <branch>refs/heads/gh-pages</branch>
+                            <server>github</server>
+                            <userName>emabrey</userName>
+                            <password>${github.server.password}</password>   
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <project>
-                        <groupId>com.github.emabrey</groupId>
-                        <artifactId>basedir-plugin</artifactId>
-                    </project>
-                    <outputDirectory>${project.reporting.stagingDirectory}</outputDirectory>
-                    <message>Deploy site documentation for the Basedir Maven Plugin</message>
-                    <merge>true</merge>
-                    <server>github</server>
-                    <repositoryOwner>emabrey</repositoryOwner>
-                    <repositoryName>basedir-plugin</repositoryName>
-                    <branch>refs/heads/gh-pages</branch>
-                </configuration>
             </plugin>
 
         </plugins>
@@ -902,7 +898,7 @@
                         </reports>
                         <inherited>false</inherited>
                         <configuration>
-                            <overview>${project.root.basedir}/src/main/javadoc/overview.md</overview>
+                            <overview>@{project.root.basedir}/src/main/javadoc/overview.md</overview>
                         </configuration>
                     </reportSet>
                 </reportSets>
@@ -941,14 +937,9 @@
                 <version>${plugin.jacoco-maven.version}</version>
                 <reportSets>
                     <reportSet>
-                        <id>unit-tests-coverage-report-generation</id>
+                        <id>coverage-report-generation</id>
                         <reports>
                             <report>report</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <id>integration-tests-coverage-report-generation</id>
-                        <reports>
                             <report>report-integration</report>
                         </reports>
                     </reportSet>
